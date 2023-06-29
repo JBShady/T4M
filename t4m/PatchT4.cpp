@@ -26,6 +26,7 @@ void PatchT4_Load();
 
 void Sys_RunInit()
 {
+	LAACheck();
 	PatchT4();
 }
 
