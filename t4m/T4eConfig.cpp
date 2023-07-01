@@ -35,7 +35,22 @@ void SetDxvkFlag(bool value)
 
     WritePrivateProfileStringA("Settings", "dxvk", value ? "1" : "0", iniPath);
 }
+bool GetDxvkFlag()
+{
+    CHAR mPath[MAX_PATH];
+    CHAR t4mePath[MAX_PATH];
+    CHAR iniPath[MAX_PATH];
+    CHAR buffer[10];
 
+    GetModuleFileNameA(NULL, mPath, MAX_PATH);
+    PathRemoveFileSpecA(mPath);
+    PathCombineA(t4mePath, mPath, "T4Me");
+    PathCombineA(iniPath, t4mePath, "T4Me.ini");
+
+    GetPrivateProfileStringA("Settings", "dxvk", "0", buffer, 10, iniPath);
+
+    return (strcmp(buffer, "1") == 0);
+}
 void dvarset()
 {
     if (r_dxvk->current.value)

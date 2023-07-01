@@ -116,6 +116,7 @@ popd</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Hooking.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Script.h" />

@@ -4,6 +4,7 @@
 // --------------------------------------+
 
 #include "StdInc.h"
+#include "Config.h"
 
 // Macro to declare an export
 // --------------------------------------+
@@ -35,13 +36,15 @@ void SDLLP::LoadLibrary(const char* library)
     Log("[SDLLP] Loading library '%s'.", library);
 
     CHAR mPath[MAX_PATH];
+    CHAR t4mePath[MAX_PATH];
     CHAR d3d9Path[MAX_PATH];
 
     GetModuleFileNameA(NULL, mPath, MAX_PATH);
     PathRemoveFileSpecA(mPath);
-    PathCombineA(d3d9Path, mPath, "T4Me\\d3d9.dll");
+    PathCombineA(t4mePath, mPath, "T4Me");
+    PathCombineA(d3d9Path, t4mePath, "d3d9.dll");
 
-    if (PathFileExistsA(d3d9Path))
+    if (GetDxvkFlag() && PathFileExistsA(d3d9Path))
     {
         Log("[SDLLP] Found d3d9.dll in T4Me subdirectory.");
         mLibraries[library] = ::LoadLibraryA(d3d9Path);
@@ -53,6 +56,8 @@ void SDLLP::LoadLibrary(const char* library)
         strcat_s(mPath, library);
 
         mLibraries[library] = ::LoadLibraryA(mPath);
+
+        SetDxvkFlag(false);
     }
 
     if (!IsLibraryLoaded(library)) Log("[SDLLP] Unable to load library '%s'.", library);
