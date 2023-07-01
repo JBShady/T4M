@@ -24,11 +24,12 @@ void PatchT4_Script();
 void PatchT4_SteamDRM();
 void PatchT4_FileDebug();
 void PatchT4_Load();
-
+void CreateConfigFile();
 void Sys_RunInit()
 {
 	LAACheck();
 	PatchT4();
+	CreateConfigFile();
 }
 
 void PatchT4()
