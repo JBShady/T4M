@@ -14,14 +14,14 @@
 class SDLLP
 {
 private:
-	static std::map<std::string, HINSTANCE> mLibraries;
+    static std::map<std::string, HINSTANCE> mLibraries;
 
-	static void	Log(const char* message, ...);
-	static void	LoadLibrary(const char* library);
-	static bool	IsLibraryLoaded(const char* library);
+    static void	Log(const char* message, ...);
+    static void	LoadLibrary(const char* library);
+    static bool	IsLibraryLoaded(const char* library);
 
 public:
-	static FARPROC GetExport(const char* function, const char* library);
+    static FARPROC GetExport(const char* function, const char* library);
 };
 
 //	Class variable declarations
@@ -32,52 +32,66 @@ std::map<std::string, HINSTANCE> SDLLP::mLibraries;
 // --------------------------------------+
 void SDLLP::LoadLibrary(const char* library)
 {
-	Log("[SDLLP] Loading library '%s'.", library);
+    Log("[SDLLP] Loading library '%s'.", library);
 
-	CHAR mPath[MAX_PATH];
+    CHAR mPath[MAX_PATH];
+    CHAR d3d9Path[MAX_PATH];
 
-	GetSystemDirectoryA(mPath, MAX_PATH);
-	strcat_s(mPath, "\\");
-	strcat_s(mPath, library);
+    GetModuleFileNameA(NULL, mPath, MAX_PATH);
+    PathRemoveFileSpecA(mPath);
+    PathCombineA(d3d9Path, mPath, "T4Me\\d3d9.dll");
 
-	mLibraries[library] = ::LoadLibraryA(mPath);
+    if (PathFileExistsA(d3d9Path))
+    {
+        Log("[SDLLP] Found d3d9.dll in T4Me subdirectory.");
+        mLibraries[library] = ::LoadLibraryA(d3d9Path);
+    }
+    else
+    {
+        GetSystemDirectoryA(mPath, MAX_PATH);
+        strcat_s(mPath, "\\");
+        strcat_s(mPath, library);
 
-	if (!IsLibraryLoaded(library)) Log("[SDLLP] Unable to load library '%s'.", library);
+        mLibraries[library] = ::LoadLibraryA(mPath);
+    }
+
+    if (!IsLibraryLoaded(library)) Log("[SDLLP] Unable to load library '%s'.", library);
 }
+
 
 // Check if export already loaded
 // --------------------------------------+
 bool SDLLP::IsLibraryLoaded(const char* library)
 {
-	return (mLibraries.find(library) != mLibraries.end() && mLibraries[library]);
+    return (mLibraries.find(library) != mLibraries.end() && mLibraries[library]);
 }
 
 // Get export address
 // --------------------------------------+
 FARPROC SDLLP::GetExport(const char* function, const char* library)
 {
-	Log("[SDLLP] Export '%s' requested from %s.", function, library);
+    Log("[SDLLP] Export '%s' requested from %s.", function, library);
 
-	if (!IsLibraryLoaded(library)) LoadLibrary(library);
+    if (!IsLibraryLoaded(library)) LoadLibrary(library);
 
-	FARPROC address = GetProcAddress(mLibraries[library], function);
+    FARPROC address = GetProcAddress(mLibraries[library], function);
 
-	if (!address) Log("[SDLLP] Unable to load export '%s' from library '%s'.", function, library);
-	return address;
+    if (!address) Log("[SDLLP] Unable to load export '%s' from library '%s'.", function, library);
+    return address;
 }
 
 // Write debug string
 // --------------------------------------+
 void SDLLP::Log(const char* message, ...)
 {
-	CHAR buffer[1024];
-	va_list ap;
+    CHAR buffer[1024];
+    va_list ap;
 
-	va_start(ap, message);
-	vsprintf(buffer, message, ap);
-	va_end(ap);
+    va_start(ap, message);
+    vsprintf(buffer, message, ap);
+    va_end(ap);
 
-	OutputDebugStringA(buffer);
+    OutputDebugStringA(buffer);
 }
 
 // --------------------------------------+

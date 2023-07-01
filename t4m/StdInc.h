@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
 
 #include <zlib.h>
 #pragma comment(lib, "zlib.lib")
