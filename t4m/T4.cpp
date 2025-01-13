@@ -37,6 +37,8 @@ extern "C"
 
 	RemoveRefToValue_t RemoveRefToValue = (RemoveRefToValue_t)0x00690130;
 
+	CL_CGameRendering_t CL_CGameRendering = (CL_CGameRendering_t)0x00478D20;
+
 	Scr_GetFunction_t Scr_GetFunction = (Scr_GetFunction_t)0x0052F0B0;
 	//Scr_GetMethod_t Scr_GetMethod = (Scr_GetMethod_t)0x00530630;
 

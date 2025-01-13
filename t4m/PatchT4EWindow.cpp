@@ -2,18 +2,7 @@
 dvar_t* safeArea_horizontal;
 dvar_t* safeArea_vertical;
 
-struct ScreenPlacement
-{
-	float scaleVirtualToReal[2];
-	float scaleVirtualToFull[2];
-	float scaleRealToVirtual[2];
-	float virtualViewableMin[2];
-	float virtualViewableMax[2];
-	float realViewportSize[2];
-	float realViewableMin[2];
-	float realViewableMax[2];
-	float subScreen[2];
-};
+
 
 
 float ScrPlace_CalcSafeAreaOffsets(float* realViewableMin, float* realViewableMax, float viewportX, float viewportY, float viewportWidth, float viewportHeight, float aspect, float safeAreaRatioHorz, float safeAreaRatioVert, float* virtualViewableMin, float* virtualViewableMax, int width, int height)
@@ -90,7 +79,7 @@ float ScrPlace_CalcSafeAreaOffsets(float* realViewableMin, float* realViewableMa
 	return virtualViewableMin[1];
 }
 
-float ScrPlace_SetupViewport(ScreenPlacement *scrPlace, float viewportX, float viewportY, float viewportWidth, float viewportHeight)
+float ScrPlace_SetupViewport(ScreenPlacement *scrPlace, float viewportX, float viewportY, float viewportWidth, float viewportHeight, BYTE inmenu = 0)
 {
 
 	float vidConfig_aspectRatioScenePixel = *(float*)0x04DA90D4;
@@ -107,23 +96,41 @@ float ScrPlace_SetupViewport(ScreenPlacement *scrPlace, float viewportX, float v
 	float adjustedRealWidth = 1.333333373069763 * viewportHeight / vidConfig_aspectRatioScenePixel;
 	if (adjustedRealWidth > viewportWidth)
 		adjustedRealWidth = viewportWidth;
-
-	float result = ScrPlace_CalcSafeAreaOffsets(
-		scrPlace->realViewableMin,
-		scrPlace->realViewableMax,
-		viewportX,
-		viewportY,
-		viewportWidth,
-		viewportHeight,
-		viewportWidth / adjustedRealWidth,
-		safeArea_horizontal->current.value,
-		safeArea_vertical->current.value,
-		scrPlace->virtualViewableMin,
-		scrPlace->virtualViewableMax,
-		viewportWidth,
-		viewportHeight
-	);
-
+	float result;
+	if (!inmenu) {
+		result = ScrPlace_CalcSafeAreaOffsets(
+			scrPlace->realViewableMin,
+			scrPlace->realViewableMax,
+			viewportX,
+			viewportY,
+			viewportWidth,
+			viewportHeight,
+			viewportWidth / adjustedRealWidth,
+			safeArea_horizontal->current.value,
+			safeArea_vertical->current.value,
+			scrPlace->virtualViewableMin,
+			scrPlace->virtualViewableMax,
+			viewportWidth,
+			viewportHeight
+		);
+	}
+	else {
+		 result = ScrPlace_CalcSafeAreaOffsets(
+			scrPlace->realViewableMin,
+			scrPlace->realViewableMax,
+			viewportX,
+			viewportY,
+			viewportWidth,
+			viewportHeight,
+			viewportWidth / adjustedRealWidth,
+			1.0f,
+			1.0f,
+			scrPlace->virtualViewableMin,
+			scrPlace->virtualViewableMax,
+			viewportWidth,
+			viewportHeight
+		);
+	}
 	scrPlace->scaleVirtualToReal[0] = adjustedRealWidth / 640.0;
 	scrPlace->scaleVirtualToReal[1] = viewportHeight / 480.0;
 	scrPlace->scaleVirtualToFull[0] = viewportWidth / 640.0;
@@ -137,7 +144,6 @@ float ScrPlace_SetupViewport(ScreenPlacement *scrPlace, float viewportX, float v
 
 __declspec(naked) void ScrPlace_SetupFloatViewportDetour() {
 	__asm {
-s
 		pushad
 		pushfd
 

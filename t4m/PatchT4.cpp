@@ -25,6 +25,7 @@ void PatchT4_SteamDRM();
 void PatchT4_FileDebug();
 void PatchT4_Load();
 void PatchT4E_Window();
+void PatchT4E_CGameRendering();
 
 void Sys_RunInit()
 {
@@ -46,7 +47,8 @@ void PatchT4()
 	PatchT4_Script();
 	PatchT4_Load();
 	PatchT4E_Window();
-	
+	PatchT4E_CGameRendering();
+
 	// check if game got started using steam
 	if (!GetModuleHandle("gameoverlayrenderer.dll"))
 		loadGameOverlay();

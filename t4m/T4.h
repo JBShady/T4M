@@ -297,7 +297,23 @@ extern "C"
 	
 	typedef void(*RemoveRefToValue_t)(scriptInstance_t inst, int type, VariableUnion u);
 	extern RemoveRefToValue_t RemoveRefToValue;
+
+	typedef int(* CL_CGameRendering_t)();
+	extern CL_CGameRendering_t CL_CGameRendering;
 }
+
+struct ScreenPlacement
+{
+	float scaleVirtualToReal[2];
+	float scaleVirtualToFull[2];
+	float scaleRealToVirtual[2];
+	float virtualViewableMin[2];
+	float virtualViewableMax[2];
+	float realViewportSize[2];
+	float realViewableMin[2];
+	float realViewableMax[2];
+	float subScreen[2];
+};
 
 typedef int scr_entref_t;
 typedef void(__cdecl * scr_function_t)(scr_entref_t);
